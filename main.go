@@ -1,15 +1,8 @@
 package main
 
 import (
-    "bytes"
-    "encoding/base64"
-    "encoding/json"
-    "io"
-    "log"
-    "net/http"
-
-   pdfcpuapi "github.com/pdfcpu/pdfcpu/pkg/api"
-    pdfcpu "github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
+    "github.com/pdfcpu/pdfcpu/pkg/api"
+    pdf "github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
 )
 
 type WatermarkRequest struct {
