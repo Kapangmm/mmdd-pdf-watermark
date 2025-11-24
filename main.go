@@ -1,39 +1,46 @@
 package main
 
 import (
-	"log"
+    "log"
 
-	"github.com/pdfcpu/pdfcpu/pkg/api"
-	"github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
+    "github.com/pdfcpu/pdfcpu/pkg/api"
+    "github.com/pdfcpu/pdfcpu/pkg/pdfcpu/model"
+    pdfcpu "github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
 )
 
 func main() {
-	// ไฟล์ทดสอบแบบง่าย ๆ ก่อน
-	in := "input.pdf"
-	out := "output.pdf"
 
-	// ข้อความลายน้ำ (ตอนนี้ใช้ข้อความสั้น ๆ ก่อน)
-	wmText := "Test Watermark"
+    in := "input.pdf"
+    out := "output.pdf"
 
-	// สร้าง watermark object จากข้อความ
-	// params ตัวอย่าง:
-	//  - "rot:45"  = หมุน 45 องศา
-	//  - "op:0.6"  = opacity 60%
-	//  - "sc:1 abs"= scale เต็มหน้าแบบ absolute
-	wm, err := pdfcpu.ParseTextWatermark(
-		wmText,
-		"rot:45, op:0.6, sc:1 abs",
-		true,  // onTop:   วางทับด้านบนเนื้อหา
-		true,  // update:  อัปเดตแทนที่ watermark เดิมถ้ามี
-		pdfcpu.POINTS,
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
+    // 1) สร้าง config
+    conf := model.NewDefaultConfiguration()
 
-	// selectedPages = nil  => ใส่ทุกหน้า
-	// conf          = nil  => ใช้ default configuration
-	if err := api.AddWatermarksFile(in, out, nil, wm, nil); err != nil {
-		log.Fatal(err)
-	}
+    // 2) ตั้งข้อความ watermark
+    text := "© 2025 Myanmar Daily Digest – LINE User: XXXXXXXXXX…"
+
+    // 3) text watermark options
+    // rot = หมุนองศา
+    // sc  = scale ขนาด watermark
+    // op  = opacity ความโปร่ง (0.0 – 1.0)
+    details := "rot:45, sc:0.8, op:0.25, fillc:#666666"
+
+    // onTop = false → ให้ watermark อยู่ใต้ layer บางอย่าง แต่ยังทับเนื้อหา
+    onTop := false
+
+    // 4) สร้าง watermark object
+    wm, err := pdfcpu.ParseTextWatermarkDetails(text, details, onTop, conf.Unit)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // 5) selectedPages = nil → ทุกหน้า
+    var pages []string = nil
+
+    // 6) apply watermark
+    err = api.AddWatermarksFile(in, out, pages, wm, conf)
+    if err != nil {
+        log.Fatal(err)
+    }
+
 }
