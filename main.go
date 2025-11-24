@@ -8,8 +8,8 @@ import (
     "log"
     "net/http"
 
-    pdfcpu "github.com/pdfcpu/pdfcpu/v3/pkg/api"
-    "github.com/pdfcpu/pdfcpu/v3/pkg/pdfcpu/model"
+   pdfcpuapi "github.com/pdfcpu/pdfcpu/pkg/api"
+    pdfcpu "github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
 )
 
 type WatermarkRequest struct {
