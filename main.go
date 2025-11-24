@@ -23,10 +23,9 @@ const (
 
 	// description ของ watermark ตาม syntax ของ pdfcpu
 	// - pos:br       = วางมุมขวาล่าง (bottom-right)
-	// - sc:0.75 rel  = scale 75% แบบ relative
 	// - op:0.5       = opacity 50%
 	// - rot:0        = ไม่หมุน
-	defaultWatermarkDesc = "pos:br, sc:0.75 rel, op:0.5, rot:0"
+	defaultWatermarkDesc = "pos:br, op:0.5, rot:0"
 )
 
 func main() {
