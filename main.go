@@ -1,8 +1,11 @@
 package main
 
 import (
-    "github.com/pdfcpu/pdfcpu/pkg/api"
-    pdf "github.com/pdfcpu/pdfcpu/pkg/pdfcpu"
+    "log"
+    "net/http"
+
+    pdfapi "github.com/pdfcpu/pdfcpu/v3/pkg/api"
+    "github.com/pdfcpu/pdfcpu/v3/pkg/pdfcpu"
 )
 
 type WatermarkRequest struct {
