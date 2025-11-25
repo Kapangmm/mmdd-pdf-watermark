@@ -18,12 +18,12 @@ import (
 )
 
 const (
-    // ถ้า client ไม่ส่ง ?text= มา
     defaultWatermarkText = "MMDD"
 
-    // ปรับให้ watermark อยู่กลางหน้า (center) เอียง 45° โปร่งใส 20%
-    defaultWatermarkDesc = "pos:c, op:0.2, rot:45"
+    // วางกลางหน้า หมุน 45 องศา โปร่ง 25%
+    defaultWatermarkDesc = "pos:cc, op:0.25, rot:45"
 )
+
 
 
 func main() {
