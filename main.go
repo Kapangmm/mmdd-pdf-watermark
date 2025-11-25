@@ -21,7 +21,7 @@ const (
     defaultWatermarkText = "MMDD"
 
     // วางกลางหน้า หมุน 45 องศา โปร่ง 25%
-    defaultWatermarkDesc = "pos:cc, op:0.25, rot:45"
+     defaultWatermarkDesc = "pos:c, rot:45, points:48, op:0.6"
 )
 
 
