@@ -119,14 +119,14 @@ func watermarkHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// "-" = ทุกหน้า (syntax ของ pdfcpu)
-	selectedPages := []string{"-"}
+    // ถ้า selectedPages เป็น nil = ใส่ watermark ทุกหน้า
+    var selectedPages []string // nil slice
 
-	// ใช้ API ระดับไฟล์โดยตรง
-	if err := api.AddWatermarksFile(inFile.Name(), outPath, selectedPages, wm, conf); err != nil {
-		http.Error(w, "failed to apply watermark: "+err.Error(), http.StatusInternalServerError)
-		return
-	}
+    // ใช้ API ระดับไฟล์โดยตรง
+    if err := api.AddWatermarksFile(inFile.Name(), outPath, selectedPages, wm, conf); err != nil {
+        http.Error(w, "failed to apply watermark: "+err.Error(), http.StatusInternalServerError)
+        return
+    }
 
 	result, err := os.ReadFile(outPath)
 	if err != nil {
