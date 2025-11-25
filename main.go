@@ -18,15 +18,13 @@ import (
 )
 
 const (
-	// ถ้า client ไม่ส่ง ?text= มา จะใช้ข้อความนี้เป็น watermark
-	defaultWatermarkText = "MMDD"
+    // ถ้า client ไม่ส่ง ?text= มา
+    defaultWatermarkText = "MMDD"
 
-	// description ของ watermark ตาม syntax ของ pdfcpu
-	// pos:br  = มุมขวาล่าง
-	// op:0.5  = opacity 50%
-	// rot:0   = ไม่หมุน
-	defaultWatermarkDesc = "pos:br, op:0.5, rot:0"
+    // ปรับให้ watermark อยู่กลางหน้า (center) เอียง 45° โปร่งใส 20%
+    defaultWatermarkDesc = "pos:c, op:0.2, rot:45"
 )
+
 
 func main() {
 	http.HandleFunc("/healthz", healthHandler)
