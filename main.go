@@ -20,8 +20,8 @@ import (
 const (
     defaultWatermarkText = "MMDD"
 
-    // วางกลางหน้า หมุน 45 องศา โปร่ง 40%
-    defaultWatermarkDesc = "pos:c, rot:55, points:60, op:0.60"
+    // วางกลางหน้า หมุน 45 องศา โปร่ง 50%
+    defaultWatermarkDesc = "pos:c, rot:55, points:75, op:0.50"
 )
 
 
