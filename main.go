@@ -1,4 +1,4 @@
-// Remark: v2025-11-24.r1 | Minimal HTTP watermark server using pdfcpu v0.11.1
+// Remark: v2025-11-25.r2 | Minimal HTTP watermark server using pdfcpu v0.11.1
 // Created: 2025-11-24
 
 package main
@@ -22,9 +22,9 @@ const (
 	defaultWatermarkText = "MMDD"
 
 	// description ของ watermark ตาม syntax ของ pdfcpu
-	// - pos:br       = วางมุมขวาล่าง (bottom-right)
-	// - op:0.5       = opacity 50%
-	// - rot:0        = ไม่หมุน
+	// pos:br  = มุมขวาล่าง
+	// op:0.5  = opacity 50%
+	// rot:0   = ไม่หมุน
 	defaultWatermarkDesc = "pos:br, op:0.5, rot:0"
 )
 
@@ -37,7 +37,7 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("[mmdd-pdf-watermark] starting server on :%s", port)
+	log.Printf("[mmdd-pdf-watermark] starting server on :%s (build v2025-11-25.r2)", port)
 
 	if err := http.ListenAndServe(":"+port, nil); err != nil {
 		log.Fatal(err)
@@ -50,6 +50,7 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func watermarkHandler(w http.ResponseWriter, r *http.Request) {
+	start := time.Now()
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		_, _ = w.Write([]byte("use POST"))
@@ -81,6 +82,8 @@ func watermarkHandler(w http.ResponseWriter, r *http.Request) {
 	if desc == "" {
 		desc = defaultWatermarkDesc
 	}
+
+	log.Printf("[watermark] len(pdf)=%d, text=%q, desc=%q", len(pdfData), text, desc)
 
 	// เขียน PDF เข้า temp file (ฝั่ง Railway ใช้ /tmp ได้)
 	inFile, err := os.CreateTemp("", "mmdd-in-*.pdf")
@@ -115,18 +118,20 @@ func watermarkHandler(w http.ResponseWriter, r *http.Request) {
 	// แปลง text + desc เป็น *model.Watermark
 	wm, err := pdfcpu.ParseTextWatermarkDetails(text, desc, false, conf.Unit)
 	if err != nil {
+		log.Printf("[watermark] parse watermark error: %v", err)
 		http.Error(w, "failed to parse watermark: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 
-    // ถ้า selectedPages เป็น nil = ใส่ watermark ทุกหน้า
-    var selectedPages []string // nil slice
+	// ใส่ watermark ทุกหน้า => selectedPages = nil
+	var selectedPages []string
 
-    // ใช้ API ระดับไฟล์โดยตรง
-    if err := api.AddWatermarksFile(inFile.Name(), outPath, selectedPages, wm, conf); err != nil {
-        http.Error(w, "failed to apply watermark: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
+	log.Printf("[watermark] calling AddWatermarksFile, pages=ALL")
+	if err := api.AddWatermarksFile(inFile.Name(), outPath, selectedPages, wm, conf); err != nil {
+		log.Printf("[watermark] AddWatermarksFile error: %v", err)
+		http.Error(w, "failed to apply watermark: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	result, err := os.ReadFile(outPath)
 	if err != nil {
@@ -141,5 +146,8 @@ func watermarkHandler(w http.ResponseWriter, r *http.Request) {
 
 	if _, err := w.Write(result); err != nil {
 		log.Printf("write response error: %v", err)
+		return
 	}
+
+	log.Printf("[watermark] done in %s, outSize=%d", time.Since(start), len(result))
 }
